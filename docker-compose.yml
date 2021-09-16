@@ -12,7 +12,9 @@ services:
       - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
     volumes:
       - db:/var/lib/mysql
-  app:
+    networks:
+      - backend
+  app-server:
     depends_on:
       - mysqldb
     build: ./recipe-backend
@@ -30,8 +32,24 @@ services:
       }'
     volumes:
       - .m2:/root/.m2
+    networks:
+      - backend
+      - frontend
     stdin_open: true
     tty: true
+  app-client:
+    depends_on:
+      - app-server
+    build: ./recipe-frontend
+    restart: on-failure
+    env_file: ./.env
+    ports:
+      - $ANGULAR_LOCAL_PORT:$ANGULAR_DOCKER_PORT
+    networks:
+      - frontend
 
 volumes:
   db:
+networks:
+  backend:
+  frontend:

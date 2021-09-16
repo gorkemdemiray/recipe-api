@@ -1,0 +1,41 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+      <h2>Recipes List</h2>
+    </div>
+    <div class="panel-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Recipe name</th>
+            <th>Creation Time</th>
+            <th>Is Vegetarian?</th>
+            <th>Serving Capacity</th>
+            <th>Ingredients</th>
+            <th>Cooking Instructions</th>
+            <th>Last Modified</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let recipe of recipes">
+            <td>{{ recipe.name }}</td>
+            <td>{{ recipe.creationTime }}</td>
+            <td>{{ recipe.vegetarian }}</td>
+            <td>{{ recipe.servingCapacity }}</td>
+            <td>
+              <tr *ngFor="let ingredient of recipe.ingredients">
+                <td>{{ ingredient.quantity }} {{ ingredient.name }}</td>
+              </tr>
+            </td>
+            <td>{{ recipe.cookingInstructions }}</td>
+            <td>{{ recipe.lastModified }}</td>
+            <td>
+              <button (click)="deleteRecipe(recipe.id)" class="btn btn-danger">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  

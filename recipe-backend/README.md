@@ -3,7 +3,8 @@
 * The data is persisted into MySQL database using Spring Data.
 * Embedded database H2 is used for testing purposes.
 * This application is secured with JWT authentication using Spring Security.
-* Both MySQL and Spring Boot images are containerized therefore we can run the whole with a single command.
+* Angular is used as the front end framework.
+* MySQL, Spring Boot and Angular images are containerized therefore we can run the whole with a single command.
 * API Endpoint Documentation is prepared using Open API.
 
 ## User Registration, User Login and Authorization process
@@ -34,6 +35,11 @@ In order to run the services on the background, please do so:
 docker-compose up -d
 ```
 
+In order to test the application, please navigate to http://localhost:8081.
+
+If you would like to change the port, please go to `.env` file and change the $ANGULAR_LOCAL_PORT parameter.
+
+
 In order to stop the running containers and remove the volumes, please do so:
 
 ```shell
@@ -41,6 +47,10 @@ docker-compose down -v
 ```
 
 ### Without Docker
+
+#### Backend
+
+Please go to `/recipe-backend` for building and running server application.
 
 In order to build, please do so:
 
@@ -66,6 +76,29 @@ In order to test, please do so:
 mvn test
 ```
 
+#### Frontend
+
+Please go to `/recipe-frontend` for building and running client application.
+
+In order to build, please do so:
+
+```shell
+ng build
+```
+
+After successful build, please do so:
+
+```shell
+ng serve
+```
+
+In order to test the application, please navigate to http://localhost:4200.
+
+If you would like to change the port, please do so:
+
+```shell
+ng serve --port $NEW_PORT
+```
 
 
 ## How to test manually
