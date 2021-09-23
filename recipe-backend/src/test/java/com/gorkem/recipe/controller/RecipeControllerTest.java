@@ -25,15 +25,15 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gorkem.recipe.exception.NoRecipesFoundException;
 import com.gorkem.recipe.exception.RecipeAlreadyExistsException;
 import com.gorkem.recipe.exception.RecipeNotFoundException;
 import com.gorkem.recipe.model.Recipe;
 import com.gorkem.recipe.payload.request.SignInRequest;
 import com.gorkem.recipe.payload.request.SignUpRequest;
 import com.gorkem.recipe.payload.response.JwtResponse;
+import com.gorkem.recipe.security.JwtAuthorizationFilter;
 import com.gorkem.recipe.util.TestUtil;
-
-import io.jsonwebtoken.SignatureException;
 
 /**
  * Recipe controller integration test class.
@@ -50,6 +50,9 @@ public class RecipeControllerTest {
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
+	
+	@Autowired
+	private JwtAuthorizationFilter jwtAuthorizationFilter;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -58,7 +61,9 @@ public class RecipeControllerTest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+				.addFilters(jwtAuthorizationFilter)
+				.build();
 	}
 	
 	@Test
@@ -76,18 +81,14 @@ public class RecipeControllerTest {
 	}
 	
 	@Test
-	void GivenInvalidJwtToken_WhenTriedForAPICall_ThenResponseIsBadRequest() throws Exception {
+	void GivenInvalidJwtToken_WhenTriedForAPICall_ThenResponseIsForbidden() throws Exception {
 		String content = objectMapper.writeValueAsString(TestUtil.getRecipe());
 		
-		final Exception exception = mockMvc.perform(post("/api/recipes")
+		mockMvc.perform(post("/api/recipes")
 				.content(content)
 				.header(AUTHORIZATION, BEARER + INVALID_JWT_TOKEN)
 				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isUnauthorized())
-				.andReturn()
-				.getResolvedException();
-		
-		assertThat(exception).isExactlyInstanceOf(SignatureException.class);
+				.andExpect(status().isForbidden());
 	}
 	
 	@Test
@@ -176,7 +177,7 @@ public class RecipeControllerTest {
 				.andReturn()
 				.getResolvedException();
 		
-		assertThat(exception).isExactlyInstanceOf(RecipeNotFoundException.class);
+		assertThat(exception).isExactlyInstanceOf(NoRecipesFoundException.class);
 	}
 	
 	@Test

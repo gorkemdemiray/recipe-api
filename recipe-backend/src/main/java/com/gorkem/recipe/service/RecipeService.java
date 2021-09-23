@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.gorkem.recipe.exception.NoRecipesFoundException;
 import com.gorkem.recipe.exception.RecipeAlreadyExistsException;
 import com.gorkem.recipe.exception.RecipeNotFoundException;
 import com.gorkem.recipe.model.Recipe;
@@ -42,7 +43,7 @@ public class RecipeService {
 	public List<Recipe> getAllRecipes() {
 		List<Recipe> recipes = recipeRepository.findAll();
 		if (recipes.size() == 0)
-			throw new RecipeNotFoundException("No recipes found!");
+			throw new NoRecipesFoundException("No recipes found!");
 		return recipes;
 	}
 	

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import com.gorkem.recipe.exception.NoRecipesFoundException;
 import com.gorkem.recipe.exception.RecipeAlreadyExistsException;
 import com.gorkem.recipe.exception.RecipeNotFoundException;
 import com.gorkem.recipe.model.Recipe;
@@ -69,7 +70,7 @@ public class RecipeServiceTest {
 	
 	@Test
 	void GivenValidData_WhenTriedForGettingNonExistingRecipes_ThenResponseIsException() throws Exception {
-		assertThrows(RecipeNotFoundException.class, () -> {
+		assertThrows(NoRecipesFoundException.class, () -> {
 			recipeService.getAllRecipes();
 		});
 	}

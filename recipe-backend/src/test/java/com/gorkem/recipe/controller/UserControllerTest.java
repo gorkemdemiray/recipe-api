@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gorkem.recipe.exception.UserAlreadyExistsException;
 import com.gorkem.recipe.payload.request.SignInRequest;
 import com.gorkem.recipe.payload.request.SignUpRequest;
+import com.gorkem.recipe.security.JwtAuthorizationFilter;
 
 /**
  * User controller integration test class.
@@ -35,6 +36,9 @@ public class UserControllerTest {
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
+	
+	@Autowired
+	private JwtAuthorizationFilter jwtAuthorizationFilter;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -43,7 +47,9 @@ public class UserControllerTest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+				.addFilters(jwtAuthorizationFilter)
+				.build();
 	}
 
 	@Test
@@ -106,7 +112,7 @@ public class UserControllerTest {
 	}
 
 	@Test
-	void GivenNonExistingCredentials_WhenTriedForLogin_ThenResponseIsBadRequest() throws Exception {
+	void GivenNonExistingCredentials_WhenTriedForLogin_ThenResponseIsUnauthorized() throws Exception {
 		SignInRequest signInRequest = SignInRequest.builder()
 				.username("username")
 				.password("password")
@@ -117,7 +123,7 @@ public class UserControllerTest {
 		final Exception exception = mockMvc.perform(post("/api/auth/signin")
 				.content(content)
 				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest())
+				.andExpect(status().isUnauthorized())
 				.andReturn()
 				.getResolvedException();
 		
@@ -125,7 +131,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	void GivenWrongCredentials_WhenTriedForLogin_ThenResponseIsBadRequest() throws Exception {
+	void GivenWrongCredentials_WhenTriedForLogin_ThenResponseIsUnauthorized() throws Exception {
 		GivenValidCredentials_WhenTriedForRegistration_ThenResponseIsCreated();
 		
 		SignInRequest signInRequest = SignInRequest.builder()
@@ -138,7 +144,7 @@ public class UserControllerTest {
 		final Exception exception = mockMvc.perform(post("/api/auth/signin")
 				.content(content)
 				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest())
+				.andExpect(status().isUnauthorized())
 				.andReturn()
 				.getResolvedException();
 		

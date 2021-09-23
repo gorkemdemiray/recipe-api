@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -51,6 +52,7 @@ public class Recipe {
 	@Max(value = 100, message = "Recipe can not be for more than 100 people!")
 	private Integer servingCapacity;
 	
+	@NotEmpty(message = "Ingredients can not be empty!")
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Ingredient> ingredients;
 	
